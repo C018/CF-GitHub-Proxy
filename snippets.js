@@ -431,7 +431,7 @@ function infoResponse(host, title, message, extraHtml = '') {
     <h2>支持的链接格式（在原始链接前加上本代理域名即可）</h2>
     <ul>
         <li>分支源码：<code>${escapeHtml(base)}https://github.com/owner/repo/archive/refs/heads/master.zip</code></li>
-        <li>release 源码：<code>${escapeHtml(base)}https://github.com/owner/repo/archive/v0.1.0.tar.gz</code></li>
+        <li>release 源码：<code>${escapeHtml(base)}https://github.com/owner/repo/archive/refs/tags/v0.1.0.tar.gz</code></li>
         <li>release 文件：<code>${escapeHtml(base)}https://github.com/owner/repo/releases/download/v0.1.0/example.zip</code></li>
         <li>分支 / commit 文件：<code>${escapeHtml(base)}https://github.com/owner/repo/blob/master/filename</code></li>
         <li>raw 文件：<code>${escapeHtml(base)}https://raw.githubusercontent.com/owner/repo/master/filename</code></li>
