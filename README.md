@@ -1,4 +1,4 @@
-# CF-Workers-GitHub-Proxy
+# CF-GitHub-Proxy
 #### 2025.5.25修改，现已支持github api加速！🎉🎉🎉
 ## 桌面端预览
 ![desktop](src/desktop.png)
@@ -33,7 +33,7 @@ git clone https://user:TOKEN@你的代理域名/https://github.com/xxxx/xxxx
 
 | 类型 | 原始链接示例 | 代理行为 |
 | --- | --- | --- |
-| 分支源码（archive） | `https://github.com/owner/repo/archive/master.zip` | 转发到上游 |
+| 分支源码（archive） | `https://github.com/owner/repo/archive/refs/heads/master.zip` | 转发到上游；GitHub 302 到 codeload 后由代理内部跟随跳转，最终返回 `200 + application/zip` |
 | release 源码 | `https://github.com/owner/repo/archive/v0.1.0.tar.gz` | 转发到上游 |
 | release 文件 | `https://github.com/owner/repo/releases/download/v0.1.0/example.zip` | 转发到上游 |
 | 分支 / commit 文件（blob） | `https://github.com/owner/repo/blob/master/filename` | `Config.jsdelivr` 开启时 302 到 jsDelivr，否则按 raw 转发 |
@@ -103,7 +103,7 @@ https://你的代理域名/https://github.com/{owner}/{repo}/tree/{ref}
 | `Config.githubToken` | `''` | GitHub Token，用于提升 API 配额并支持私有仓库 |
 | `whiteList` | `[]` | 路径白名单，仅放行路径中包含数组中任一字符串的请求；空数组表示不限制 |
 | `ZIP_LIMITS` | 见上表 | 文件夹打包的文件数 / 单文件体积 / 总体积 / 并发上限 |
-| `UA` | `'CF-Workers-GitHub-Proxy'` | 转发到上游时使用的 User-Agent |
+| `UA` | `'CF-GitHub-Proxy'` | 转发到上游时使用的 User-Agent |
 | `HOME_HTML` | 内置页面 | 代理首页 HTML，favicon 已内联为 data URI，不依赖任何外部站点 |
 | `PREFLIGHT_INIT` | — | CORS 预检（OPTIONS）响应配置 |
 
@@ -136,7 +136,7 @@ const Config = {
 
 ## 已知限制
 
-- **GitHub 旧式 archive 链接**：`github.com/{owner}/{repo}/archive/{ref}.zip` 与 `releases/...` 采用上游转发，GitHub 会 302 到 `codeload.github.com`；本代理不重写该跳转目标，最终由客户端直连 codeload 下载，这部分流量不经过代理。
+- **GitHub 旧式 archive / release 源码链接**：`github.com/{owner}/{repo}/archive/{ref}.zip`、`archive/{tag}.tar.gz` 与 `releases/...` 均由本代理转发。GitHub 会将它们 302 到 `codeload.github.com`，本代理在服务端**自动跟随**该跳转并把文件内容回传给客户端，因此客户端收到的是本代理返回的 `HTTP 200 + application/zip`（实测行为），下载流量全程经过代理，不存在客户端直连 codeload 的情况。
 - **GitHub API 配额**：匿名 60 次/小时，配额耗尽时文件夹打包与 API 代理都会返回提示页，建议配置 `Config.githubToken`。
 - **免费版子请求上限**：Cloudflare 免费版单次请求最多 50 个子请求，限制了单次可打包的文件数（详见「保护性限制」）。
 - **jsDelivr 开关只作用于 blob**：`Config.jsdelivr = 1` 时，只有 `github.com/{owner}/{repo}/blob/...` 会 302 到 jsDelivr；`raw.githubusercontent.com/...` 形式的链接始终原样转发，不受该开关影响。

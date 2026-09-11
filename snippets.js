@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * CF-Workers-GitHub-Proxy — Cloudflare Snippets 版
+ * CF-GitHub-Proxy — Cloudflare Snippets 版
  *
  * 功能：
  *  1. 代理 GitHub release / archive / blob / raw / gist / tags / api 资源（保留 jsDelivr 开关）；
@@ -234,8 +234,8 @@ const HOME_HTML = `<!DOCTYPE html>
 				</form>
 
 				<div class="tips">
-					<p>✨ 支持带协议头(https://)或不带的GitHub链接，api加速自2025.5.25已支持！更多用法见<a href="https://hunsh.net/archives/23/">文档说明</a></p>
-					<p>🚀 release、archive使用cf加速，文件会跳转至JsDelivr</p>
+					<p>✨ 支持带协议头(https://)或不带的GitHub链接，api加速自2025.5.25已支持！更多用法见<a href="https://github.com/C018/CF-GitHub-Proxy#readme">项目说明</a></p>
+					<p>🚀 release、archive 经 CF 转发；jsDelivr 跳转仅对 blob 分支文件生效，且需开启 Config.jsdelivr</p>
 					<p>📦 文件夹下载已支持：在 /tree/{分支}/{目录} 链接前加上本代理域名，即可自动打包为 zip 下载</p>
 				</div>
 
@@ -250,7 +250,7 @@ const HOME_HTML = `<!DOCTYPE html>
 					<p>📦 文件夹下载：https://github.com/C018/CF-GitHub-Proxy/tree/main/src</p>
 				</div>
 				<p style="position: sticky;top: calc(100% - 2.5em);">
-    由 <a style="color: #1E90FF" href="https://github.com/C018/CF-GitHub-Proxy" target="_blank">CF-Workers-GitHub-Proxy</a> 
+    由 <a style="color: #1E90FF" href="https://github.com/C018/CF-GitHub-Proxy" target="_blank">CF-GitHub-Proxy</a> 
     提供技术支持。
     在 <a style="color: #1E90FF" href="https://workers.cloudflare.com/" target="_blank">Cloudflare Workers</a> 
     上运行。
@@ -287,7 +287,7 @@ const ZIP_LIMITS = {
     concurrency: 8                    // 并发抓取文件数
 }
 
-const UA = 'CF-Workers-GitHub-Proxy'
+const UA = 'CF-GitHub-Proxy'
 
 const whiteList = [] // 白名单，路径里面有包含字符的才会通过，e.g. ['/username/']
 
@@ -430,7 +430,7 @@ function infoResponse(host, title, message, extraHtml = '') {
     ${extraHtml}
     <h2>支持的链接格式（在原始链接前加上本代理域名即可）</h2>
     <ul>
-        <li>分支源码：<code>${escapeHtml(base)}https://github.com/owner/repo/archive/master.zip</code></li>
+        <li>分支源码：<code>${escapeHtml(base)}https://github.com/owner/repo/archive/refs/heads/master.zip</code></li>
         <li>release 源码：<code>${escapeHtml(base)}https://github.com/owner/repo/archive/v0.1.0.tar.gz</code></li>
         <li>release 文件：<code>${escapeHtml(base)}https://github.com/owner/repo/releases/download/v0.1.0/example.zip</code></li>
         <li>分支 / commit 文件：<code>${escapeHtml(base)}https://github.com/owner/repo/blob/master/filename</code></li>
@@ -439,7 +439,7 @@ function infoResponse(host, title, message, extraHtml = '') {
         <li>GitHub API：<code>${escapeHtml(base)}https://api.github.com/repos/owner/repo</code></li>
         <li>文件夹打包下载：<code>${escapeHtml(base)}https://github.com/owner/repo/tree/master/src</code></li>
     </ul>
-    <div class="foot">CF-Workers-GitHub-Proxy</div>
+    <div class="foot">CF-GitHub-Proxy</div>
 </div>
 </body>
 </html>`
